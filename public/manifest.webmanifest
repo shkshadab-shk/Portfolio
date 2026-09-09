@@ -1,0 +1,17 @@
+{
+  "name": "Shadab Shaikh — AI & Machine Learning Engineer",
+  "short_name": "Shadab Shaikh",
+  "description": "Portfolio of Shadab Shaikh — AI & ML undergraduate and full-stack MERN developer.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#04060f",
+  "theme_color": "#04060f",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
