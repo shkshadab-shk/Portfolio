@@ -4,7 +4,7 @@ import { Reveal } from '../ui'
 import { accent, accentByIndex, cx } from '../../lib/accents'
 import { Icon } from '../../lib/icons'
 import { EASE, viewport } from '../../lib/motion'
-import { anchorHandler, scrollToTop } from '../../lib/scroll'
+import { anchorHandler } from '../../lib/scroll'
 import { contact, footerNote, navLinks, profile, socials } from '../../data/resume'
 
 export default function Footer() {
@@ -125,30 +125,16 @@ export default function Footer() {
             © {year} {profile.name}. {footerNote}.
           </p>
 
-          <div className="flex items-center gap-4">
-            <motion.span
-              aria-hidden="true"
-              initial={reduce ? false : { opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={viewport}
-              transition={{ duration: 0.6, ease: EASE }}
-              className="hidden font-mono text-[0.65rem] uppercase tracking-[0.24em] text-ink-low sm:inline"
-            >
-              {profile.status}
-            </motion.span>
-
-            <button
-              type="button"
-              onClick={scrollToTop}
-              aria-label="Back to top"
-              className="neu group/top grid h-11 w-11 place-items-center rounded-full text-ink-mid transition-colors duration-300 hover:text-ink-hi"
-            >
-              <Icon
-                name="arrowDown"
-                className="h-4 w-4 rotate-180 transition-transform duration-500 ease-smooth group-hover/top:-translate-y-0.5"
-              />
-            </button>
-          </div>
+          <motion.span
+            aria-hidden="true"
+            initial={reduce ? false : { opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={viewport}
+            transition={{ duration: 0.6, ease: EASE }}
+            className="font-mono text-[0.65rem] uppercase tracking-[0.24em] text-ink-low"
+          >
+            {profile.status}
+          </motion.span>
         </div>
       </div>
     </footer>

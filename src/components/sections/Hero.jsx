@@ -143,7 +143,7 @@ export default function Hero() {
       className="flex min-h-[100svh] items-center pt-28 sm:pt-32 lg:pt-36"
       innerClassName="w-full"
     >
-      <div ref={ref} className="grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+      <div ref={ref} className="relative grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
         <motion.div style={{ y: copyY, opacity: fade }}>
           <motion.div
             initial={reduce ? false : 'hidden'}

@@ -79,6 +79,10 @@
     /* Sticky navbar clearance for #hash jumps and smooth-scroll landings. */
     scroll-padding-top: 5.5rem;
     -webkit-tap-highlight-color: transparent;
+    /* Scroll container for Framer's target-based useScroll (Hero/Journey/
+       Certifications parallax). It must be non-static so offsets measure
+       against it correctly. */
+    position: relative;
   }
 
   body {

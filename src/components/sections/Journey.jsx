@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { forwardRef, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 
 import { Panel, Reveal, Section, SectionHeading, Tag } from '../ui'
@@ -36,12 +36,13 @@ function TimelineNode({ entry, a, reduce }) {
   )
 }
 
-function TimelineEntry({ entry, index, reduce }) {
+const TimelineEntry = forwardRef(function TimelineEntry({ entry, index, reduce }, ref) {
   const a = accent(entry.accent)
   const isLeft = index % 2 === 0
 
   return (
     <motion.li
+      ref={ref}
       layout={!reduce}
       initial={reduce ? false : { opacity: 0, y: 26 }}
       animate={{ opacity: 1, y: 0 }}
@@ -124,7 +125,7 @@ function TimelineEntry({ entry, index, reduce }) {
       </div>
     </motion.li>
   )
-}
+})
 
 export default function Journey() {
   const reduce = useReducedMotion()

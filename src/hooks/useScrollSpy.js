@@ -3,41 +3,33 @@ import { useEffect, useState } from 'react'
 /**
  * Tracks which section is currently in view so the navbar can highlight it.
  *
- * Uses IntersectionObserver with a band centred on the viewport, and picks the
- * entry closest to that band's centre — this avoids the flicker you get when
- * two tall sections are both intersecting.
+ * Picks the last section in document order whose top has crossed a line just
+ * below the sticky navbar — for tall sections that is the one the viewport is
+ * actually inside, and it avoids the flicker of matching two intersecting boxes.
  */
 export function useScrollSpy(ids, { offset = 96 } = {}) {
   const [activeId, setActiveId] = useState(ids[0])
 
   useEffect(() => {
-    const elements = ids.map((id) => document.getElementById(id)).filter(Boolean)
-    if (!elements.length) return
-
     let ticking = false
+
     const pick = () => {
       ticking = false
+      // Re-resolved every frame rather than once: below-the-fold sections are
+      // code-split, so they are still absent from the DOM when this first runs.
+      const elements = ids.map((id) => document.getElementById(id)).filter(Boolean)
+      if (!elements.length) return
+
       const line = offset + 40
       let best = elements[0]
-      let bestDistance = Infinity
 
       for (const el of elements) {
-        const { top, bottom } = el.getBoundingClientRect()
-        if (bottom < line) continue
-        const distance = Math.abs(top - line)
-        if (top - line <= 0 || distance < bestDistance) {
-          if (top - line <= 0) {
-            best = el
-            bestDistance = 0
-          } else if (distance < bestDistance) {
-            best = el
-            bestDistance = distance
-          }
-        }
+        if (el.getBoundingClientRect().top - line > 0) break
+        best = el
       }
 
       // At the very bottom of the page the last section wins outright.
-      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 4) {
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
         best = elements[elements.length - 1]
       }
 
@@ -53,9 +45,14 @@ export function useScrollSpy(ids, { offset = 96 } = {}) {
     pick()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    // Catch lazy sections (and webfonts) landing after this effect ran — the
+    // next scroll alone would not re-pick once the visitor has stopped.
+    const observer = new ResizeObserver(onScroll)
+    observer.observe(document.documentElement)
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      observer.disconnect()
     }
   }, [ids, offset])
 

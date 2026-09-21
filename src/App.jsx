@@ -6,6 +6,7 @@ import CursorGlow from './components/background/CursorGlow'
 import ScrollProgress from './components/background/ScrollProgress'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
+import { BackToTop } from './components/ui'
 
 import Hero from './components/sections/Hero'
 import About from './components/sections/About'
@@ -77,6 +78,7 @@ export default function App() {
         </motion.main>
       </AnimatePresence>
 
+      <BackToTop />
       <Footer />
     </>
   )
