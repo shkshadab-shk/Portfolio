@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 
 import { Button, Counter, Reveal, Section } from '../ui'
+import { useIsMobile } from '../../hooks/useMediaQuery'
 import { accent, accentByIndex, cx } from '../../lib/accents'
 import { Icon } from '../../lib/icons'
 import { EASE, stagger } from '../../lib/motion'
@@ -129,13 +130,17 @@ function IdentityCore({ reduce }) {
 
 export default function Hero() {
   const reduce = useReducedMotion()
+  const isMobile = useIsMobile()
   const ref = useRef(null)
   const typed = useTypedRole(reduce)
 
+  // Scroll-linked parallax repaints large blurred layers every frame — cheap on
+  // desktop GPUs, janky on phones. Freeze it (and the fade-out) on mobile.
+  const still = reduce || isMobile
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const copyY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['0%', '18%'])
-  const coreY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['0%', '30%'])
-  const fade = useTransform(scrollYProgress, [0, 0.8], [1, reduce ? 1 : 0])
+  const copyY = useTransform(scrollYProgress, [0, 1], still ? ['0%', '0%'] : ['0%', '18%'])
+  const coreY = useTransform(scrollYProgress, [0, 1], still ? ['0%', '0%'] : ['0%', '30%'])
+  const fade = useTransform(scrollYProgress, [0, 0.8], [1, still ? 1 : 0])
 
   return (
     <Section

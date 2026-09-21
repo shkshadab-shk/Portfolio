@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 
 import { Button, IconTile, Panel, Reveal, Section, SectionHeading, Tag, TiltCard } from '../ui'
+import { useIsMobile } from '../../hooks/useMediaQuery'
 import { accent as pickAccent, accentByIndex, cx } from '../../lib/accents'
 import { Icon } from '../../lib/icons'
 import { fadeUp, stagger, viewport } from '../../lib/motion'
@@ -184,10 +185,14 @@ function AchievementTile({ item, index }) {
 
 export default function Certifications() {
   const reduce = useReducedMotion()
+  const isMobile = useIsMobile()
   const wrapRef = useRef(null)
 
+  // Skip the scroll-linked wash on mobile — moving a blur-3xl layer every frame
+  // is the main source of scroll jank on phones.
+  const still = reduce || isMobile
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ['start end', 'end start'] })
-  const washY = useTransform(scrollYProgress, [0, 1], reduce ? ['0%', '0%'] : ['-9%', '9%'])
+  const washY = useTransform(scrollYProgress, [0, 1], still ? ['0%', '0%'] : ['-9%', '9%'])
 
   return (
     <Section id="certifications">

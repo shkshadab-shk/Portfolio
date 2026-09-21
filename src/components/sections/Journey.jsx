@@ -2,6 +2,7 @@ import { forwardRef, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 
 import { Panel, Reveal, Section, SectionHeading, Tag } from '../ui'
+import { useIsMobile } from '../../hooks/useMediaQuery'
 import { accent, cx } from '../../lib/accents'
 import { Icon } from '../../lib/icons'
 import { EASE } from '../../lib/motion'
@@ -129,12 +130,17 @@ const TimelineEntry = forwardRef(function TimelineEntry({ entry, index, reduce }
 
 export default function Journey() {
   const reduce = useReducedMotion()
+  const isMobile = useIsMobile()
   const [filter, setFilter] = useState(timelineFilters[0])
   const listRef = useRef(null)
 
+  // The spring-tracked spine fill and its travelling head run a spring on every
+  // scroll frame; on mobile that fights the scroll. Show the spine filled and
+  // drop the animation there.
+  const still = reduce || isMobile
   const { scrollYProgress } = useScroll({ target: listRef, offset: ['start 78%', 'end 65%'] })
   const smooth = useSpring(scrollYProgress, { stiffness: 130, damping: 30, mass: 0.4 })
-  const spineScale = reduce ? 1 : smooth
+  const spineScale = still ? 1 : smooth
   const headY = useTransform(smooth, (v) => `${v * 100}%`)
 
   const visible = useMemo(
@@ -197,10 +203,13 @@ export default function Journey() {
           style={{ scaleY: spineScale, x: '-50%' }}
           className="absolute bottom-0 left-7 top-0 w-px origin-top bg-gradient-to-b from-neon-blue via-neon-violet to-neon-purple lg:left-1/2"
         />
-        {/* Full-height rail so a percentage `y` maps to the spine's own length. */}
-        <motion.span aria-hidden="true" style={{ y: headY }} className="absolute inset-y-0 left-7 w-0 lg:left-1/2">
-          <span className="absolute top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-cyan shadow-glow-cyan" />
-        </motion.span>
+        {/* Full-height rail so a percentage `y` maps to the spine's own length.
+            Hidden when the spine is static, so no lone dot floats at the top. */}
+        {still ? null : (
+          <motion.span aria-hidden="true" style={{ y: headY }} className="absolute inset-y-0 left-7 w-0 lg:left-1/2">
+            <span className="absolute top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-neon-cyan shadow-glow-cyan" />
+          </motion.span>
+        )}
 
         <motion.ul layout={!reduce} className="flex flex-col gap-10 sm:gap-12">
           <AnimatePresence mode="popLayout" initial={false}>

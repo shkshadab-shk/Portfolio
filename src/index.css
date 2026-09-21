@@ -83,12 +83,20 @@
        Certifications parallax). It must be non-static so offsets measure
        against it correctly. */
     position: relative;
+    /* html is the element that actually scrolls, so the clip has to live here —
+       on <body> alone a decorative overflow still lets html scroll sideways,
+       which reads as the page "wiggling" left/right on touch. `clip` (not
+       `hidden`) leaves position:sticky working. */
+    overflow-x: clip;
   }
 
   body {
     @apply bg-base-0 font-sans text-ink-mid antialiased;
     /* Fixed background layers live in <Background/>; keep body itself flat. */
     overflow-x: clip;
+    /* Belt-and-braces: never let a stray wide child stretch the body box. */
+    width: 100%;
+    max-width: 100%;
     text-rendering: optimizeLegibility;
     transition: background-color 0.5s var(--tw-ease, cubic-bezier(0.22, 1, 0.36, 1)),
       color 0.5s cubic-bezier(0.22, 1, 0.36, 1);

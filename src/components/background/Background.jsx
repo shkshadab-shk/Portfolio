@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
 
 import { useIsMobile } from '../../hooks/useMediaQuery'
+import { cx } from '../../lib/accents'
 
 /**
  * Fixed atmosphere behind the whole page: drifting aurora blobs (CSS only),
@@ -167,11 +168,17 @@ export default function Background() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* Aurora field */}
+      {/* Aurora field. A smaller blur radius on mobile keeps the per-frame
+          compositing of these large layers affordable on phone GPUs; the drift
+          animation is also dropped there (touch devices, weaker fill rate). */}
       {AURORA.map((blob) => (
         <span
           key={blob.variable}
-          className={`absolute rounded-full blur-[90px] animate-aurora-drift gpu sm:blur-[120px] ${blob.className}`}
+          className={cx(
+            'absolute rounded-full gpu blur-[60px] sm:blur-[120px]',
+            !isMobile && 'animate-aurora-drift',
+            blob.className,
+          )}
           style={{
             background: `radial-gradient(closest-side, rgb(var(${blob.variable}) / var(--aurora-opacity)), transparent 72%)`,
             animationDelay: blob.delay,
