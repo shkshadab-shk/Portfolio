@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://shadab-shaikh.vercel.app/sitemap.xml
+Sitemap: https://shadabshk.vercel.app/sitemap.xml
